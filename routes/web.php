@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['prefix' => 'tweets'], function () {
+    Route::get('/', 'TweetController@tweets');
+    Route::get('/{id}', 'TweetController@tweet');
+    Route::post('/', 'TweetController@create');
+    Route::delete('/{id}', 'TweetController@delete');
 });
