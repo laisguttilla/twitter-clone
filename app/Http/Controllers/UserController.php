@@ -80,6 +80,8 @@ class UserController extends Controller
                 'username' => $request['username']
             ]);
 
+            $user = User::find($userID);
+
             return response()->json($user, 201);
         } catch (ModelNotFoundException $exception) {
 
