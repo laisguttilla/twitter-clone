@@ -13,15 +13,13 @@ class UserController extends Controller
     public function users()
     {
         try {
+            $users = User::all();
+            if(!count($users)) {
+                return response()->json('No users to display.', 200);
+            }
 
-            return response()->json(User::all(), 200);
-        } catch (ModelNotFoundException $exception) {
-
-            return response()->json([
-                'message' => 'Users not found.'
-            ], 404);
-        } catch (Exception $exception) {
-
+            return response()->json($users, 200);
+        }  catch (Exception $exception) {
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
@@ -31,15 +29,12 @@ class UserController extends Controller
     public function user(string $userID)
     {
         try {
-
             return response()->json(User::findOrFail($userID), 200);
         } catch (ModelNotFoundException $exception) {
-
             return response()->json([
                 'message' => 'User not found.'
             ], 404);
         } catch (Exception $exception) {
-
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
@@ -57,13 +52,7 @@ class UserController extends Controller
             ]);
 
             return response()->json($user, 201);
-        } catch (ModelNotFoundException $exception) {
-
-            return response()->json([
-                'message' => 'User not found.'
-            ], 404);
         } catch (Exception $exception) {
-
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
@@ -73,23 +62,20 @@ class UserController extends Controller
     public function update(UserRequest $request, string $userID)
     {
         try {
-            $user = User::whereId($userID)->update([
+            $user = User::find($userID);
+            $user->update([
                 'name' => $request['name'],
                 'email' => $request['email'],
                 'password' => Hash::make($request['password']),
                 'username' => $request['username']
             ]);
 
-            $user = User::find($userID);
-
             return response()->json($user, 201);
         } catch (ModelNotFoundException $exception) {
-
             return response()->json([
                 'message' => 'User not found.'
             ], 404);
         } catch (Exception $exception) {
-
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
@@ -104,12 +90,10 @@ class UserController extends Controller
 
             return response()->json('User deleted successfully.', 200);
         } catch (ModelNotFoundException $exception) {
-
             return response()->json([
                 'message' => 'User not found.'
             ], 404);
         } catch (Exception $exception) {
-
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
