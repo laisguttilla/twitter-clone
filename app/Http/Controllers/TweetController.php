@@ -12,15 +12,13 @@ class TweetController extends Controller
     public function tweets()
     {
         try {
+            $tweets = Tweet::all();
+            if(!count($tweets)) {
+                return response()->json('No tweets to display', 200);
+            }
 
-            return response()->json(Tweet::all(), 200);
-        } catch (ModelNotFoundException $exception) {
-
-            return response()->json([
-                'message' => 'Tweets not found.'
-            ], 404);
+            return response()->json($tweets, 200);
         } catch (Exception $exception) {
-
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
@@ -30,15 +28,12 @@ class TweetController extends Controller
     public function tweet(string $tweetID)
     {
         try {
-
             return response()->json(Tweet::findOrFail($tweetID), 200);
         } catch (ModelNotFoundException $exception) {
-
             return response()->json([
                 'message' => 'Tweet not found.'
             ], 404);
         } catch (Exception $exception) {
-
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
@@ -54,13 +49,7 @@ class TweetController extends Controller
             ]);
 
             return response()->json($tweet, 201);
-        } catch (ModelNotFoundException $exception) {
-
-            return response()->json([
-                'message' => 'Tweet not found.'
-            ], 404);
         } catch (Exception $exception) {
-
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
@@ -75,12 +64,10 @@ class TweetController extends Controller
 
             return response()->json('Tweet deleted successfully.', 200);
         } catch (ModelNotFoundException $exception) {
-
             return response()->json([
                 'message' => 'Tweet not found.'
             ], 404);
         } catch (Exception $exception) {
-
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
             ], 500);
