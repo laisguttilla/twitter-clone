@@ -12,10 +12,20 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+Route::group(['prefix' => 'tweets'], function () {
+    Route::get('/', 'TweetController@tweets');
+    Route::get('/{id}', 'TweetController@tweet');
+    Route::post('/', 'TweetController@create');
+    Route::delete('/{id}', 'TweetController@delete');
+});
+
 Route::group(['prefix' => 'users'], function () {
     Route::get('/', 'UserController@users');
     Route::get('/{id}', 'UserController@user');
     Route::post('/', 'UserController@create');
     Route::put('/{id}', 'UserController@update');
     Route::delete('/{id}', 'UserController@delete');
+
 });
