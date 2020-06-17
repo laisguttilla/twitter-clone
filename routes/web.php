@@ -29,3 +29,10 @@ Route::group(['prefix' => 'users'], function () {
     Route::delete('/{id}', 'UserController@delete');
 
 });
+
+Route::group(['prefix' => 'replies'], function () {
+    Route::get('/', 'ReplyController@replies');
+    Route::get('/{id}', 'ReplyController@reply');
+    Route::post('/', 'ReplyController@create');
+    Route::delete('/{id}', 'ReplyController@delete');
+});

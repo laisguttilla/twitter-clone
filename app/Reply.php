@@ -5,11 +5,11 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Tweet extends Model
+class Reply extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'tweets';
+    protected $table = 'replies';
 
     /**
      * The attributes that are mass assignable.
@@ -17,8 +17,17 @@ class Tweet extends Model
      * @var array
      */
     protected $fillable = [
-        'tweet_text', 'user_id'
+        'reply', 'user_id', 'tweet_id'
     ];
+
+    /**
+     * Tweet relationship
+     *
+     */
+    public function tweet()
+    {
+        return $this->belongsTo('App\Tweet');
+    }
 
     /**
      * User relationship
@@ -27,14 +36,5 @@ class Tweet extends Model
     public function user()
     {
         return $this->belongsTo('App\User');
-    }
-
-    /**
-     * Replies relationship
-     *
-     */
-    public function replies()
-    {
-        return $this->hasMany('App\Reply');
     }
 }
