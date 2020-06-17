@@ -46,4 +46,13 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Tweet');
     }
+
+    /**
+     * Replies relationship
+     *
+     */
+    public function replies()
+    {
+        return $this->hasMany('App\Reply');
+    }
 }

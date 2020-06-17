@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TweetRequest extends FormRequest
+class ReplyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,8 @@ class TweetRequest extends FormRequest
     {
         return [
             'user_id' => 'required',
-            'tweet_text' => 'required|max:140',
+            'tweet_id' => 'required',
+            'reply' => 'required|max:280',
         ];
     }
 
@@ -38,8 +39,9 @@ class TweetRequest extends FormRequest
     {
         return [
             'user_id.required' => 'Um usuário é necessário',
-            'tweet_text.required'  => 'Escreva algo',
-            'tweet_text.max'  => 'O tweet pode ter no máximo 140 caracteres',
+            'tweet_id.required' => 'Um tweet é necessário',
+            'reply.required'  => 'Escreva algo',
+            'reply.max'  => 'O reply pode ter no máximo 140 caracteres',
         ];
     }
 }
