@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tweet extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Likeable;
+
+    protected $guarded = [];
 
     protected $table = 'tweets';
 

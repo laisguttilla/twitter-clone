@@ -44,7 +44,7 @@ class User extends Authenticatable
      */
     public function tweets()
     {
-        return $this->hasMany('App\Tweet');
+        return $this->hasMany('App\Tweet')->latest();
     }
 
     /**
@@ -54,5 +54,13 @@ class User extends Authenticatable
     public function replies()
     {
         return $this->hasMany('App\Reply');
+    }
+
+    /**
+     * Likes relationship
+     */
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
     }
 }
