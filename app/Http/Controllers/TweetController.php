@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TweetRequest;
 use App\Tweet;
+use App\TweetLike;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -71,6 +72,24 @@ class TweetController extends Controller
         } catch (ModelNotFoundException $exception) {
             return response()->json([
                 'message' => 'Tweet not found.'
+            ], 404);
+        } catch (Exception $exception) {
+            return response()->json([
+                'message' => 'Oops! Something went wrong.'
+            ], 500);
+        }
+    }
+
+    public function dislike(string $tweetID, string $likeID)
+    {
+        try {
+            $like = TweetLike::where('tweet_id', $tweetID)->where('id', $likeID)->first();
+            $like->delete();
+
+            return response()->json('Disliked successfully!');
+        } catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'message' => 'Like not found.'
             ], 404);
         } catch (Exception $exception) {
             return response()->json([

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ReplyRequest;
 use App\Reply;
+use App\ReplyLike;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -71,6 +72,24 @@ class ReplyController extends Controller
         } catch (ModelNotFoundException $exception) {
             return response()->json([
                 'message' => 'Reply not found.'
+            ], 404);
+        } catch (Exception $exception) {
+            return response()->json([
+                'message' => 'Oops! Something went wrong.'
+            ], 500);
+        }
+    }
+
+    public function dislike(string $replyID, string $likeID)
+    {
+        try {
+            $like = ReplyLike::where('reply_id', $replyID)->where('id', $likeID)->first();
+            $like->delete();
+
+            return response()->json('Disliked successfully!');
+        } catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'message' => 'Like not found.'
             ], 404);
         } catch (Exception $exception) {
             return response()->json([
