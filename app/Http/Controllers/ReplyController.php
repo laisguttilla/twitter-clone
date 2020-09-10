@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TweetRequest;
-use App\Tweet;
-use App\TweetLike;
+use App\Http\Requests\ReplyRequest;
+use App\Reply;
+use App\ReplyLike;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
-class TweetController extends Controller
+class ReplyController extends Controller
 {
-    public function tweets()
+    public function replies()
     {
         try {
-            $tweets = Tweet::with('replies')->get();
+            $tweets = Reply::all();
             if(!count($tweets)) {
-                return response()->json('No tweets to display', 200);
+                return response()->json('No replies to display', 200);
             }
 
             return response()->json($tweets, 200);
@@ -27,15 +27,14 @@ class TweetController extends Controller
         }
     }
 
-    public function tweet(string $tweetID)
+    public function reply(string $replyID)
     {
         try {
-            $tweet = Tweet::with(['user','replies', 'replies.user', 'likes', 'likes.user'])->withCount(['replies', 'likes'])->find($tweetID);
-
-            return response()->json($tweet, 200);
+            $reply = Reply::with('user', 'tweet', 'tweet.user', 'likes')->withCount(['likes'])->find($replyID);
+            return response()->json($reply, 200);
         } catch (ModelNotFoundException $exception) {
             return response()->json([
-                'message' => 'Tweet not found.'
+                'message' => 'Reply not found.'
             ], 404);
         } catch (Exception $exception) {
             return response()->json([
@@ -44,12 +43,13 @@ class TweetController extends Controller
         }
     }
 
-    public function create(TweetRequest $request)
+    public function create(ReplyRequest $request)
     {
         try {
-            $tweet = Tweet::create([
+            $tweet = Reply::create([
+                'reply' => $request['reply'],
                 'user_id' => $request['user_id'],
-                'tweet_text' => $request['tweet_text'],
+                'tweet_id' => $request['tweet_id'],
             ]);
 
             return response()->json($tweet, 201);
@@ -60,18 +60,18 @@ class TweetController extends Controller
         }
     }
 
-    public function like(string $tweetID, Request $request)
+    public function like(string $replyID, Request $request)
     {
         try {
-            $tweet = Tweet::find($tweetID);
+            $reply = Reply::find($replyID);
 
-            return response()->json($tweet->likes()->create([
-                'tweet_id' => $tweet->id,
+            return response()->json($reply->likes()->create([
+                'reply_id' => $reply->id,
                 'user_id' => $request->user_id
             ], 201));
         } catch (ModelNotFoundException $exception) {
             return response()->json([
-                'message' => 'Tweet not found.'
+                'message' => 'Reply not found.'
             ], 404);
         } catch (Exception $exception) {
             return response()->json([
@@ -80,10 +80,10 @@ class TweetController extends Controller
         }
     }
 
-    public function dislike(string $tweetID, string $likeID)
+    public function dislike(string $replyID, string $likeID)
     {
         try {
-            $like = TweetLike::where('tweet_id', $tweetID)->where('id', $likeID)->first();
+            $like = ReplyLike::where('reply_id', $replyID)->where('id', $likeID)->first();
             $like->delete();
 
             return response()->json('Disliked successfully!');
@@ -98,13 +98,13 @@ class TweetController extends Controller
         }
     }
 
-    public function delete(string $tweetID)
+    public function delete(string $replyID)
     {
         try {
-            $tweet = Tweet::findOrFail($tweetID);
-            $tweet->delete();
+            $reply = Reply::findOrFail($replyID);
+            $reply->delete();
 
-            return response()->json('Tweet deleted successfully.', 200);
+            return response()->json('Reply deleted successfully.', 200);
         } catch (ModelNotFoundException $exception) {
             return response()->json([
                 'message' => 'Tweet not found.'

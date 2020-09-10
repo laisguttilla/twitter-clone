@@ -13,12 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::view('/welcome', 'welcome');
 
 Route::group(['prefix' => 'tweets'], function () {
     Route::get('/', 'TweetController@tweets');
     Route::get('/{id}', 'TweetController@tweet');
     Route::post('/', 'TweetController@create');
     Route::delete('/{id}', 'TweetController@delete');
+    Route::post('/{id}/like', 'TweetController@like');
+    Route::delete('/{id}/dislike/{like_id}', 'TweetController@dislike');
 });
 
 Route::group(['prefix' => 'users'], function () {
@@ -28,4 +31,13 @@ Route::group(['prefix' => 'users'], function () {
     Route::put('/{id}', 'UserController@update');
     Route::delete('/{id}', 'UserController@delete');
 
+});
+
+Route::group(['prefix' => 'replies'], function () {
+    Route::get('/', 'ReplyController@replies');
+    Route::get('/{id}', 'ReplyController@reply');
+    Route::post('/', 'ReplyController@create');
+    Route::delete('/{id}', 'ReplyController@delete');
+    Route::post('/{id}/like', 'ReplyController@like');
+    Route::delete('/{id}/dislike/{like_id}', 'ReplyController@dislike');
 });

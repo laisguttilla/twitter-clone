@@ -9,23 +9,26 @@ class Tweet extends Model
 {
     use SoftDeletes;
 
+    protected $guarded = [];
+
     protected $table = 'tweets';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'tweet_text', 'user_id'
     ];
 
-    /**
-     * User relationship
-     *
-     */
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Reply::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(TweetLike::class);
     }
 }
