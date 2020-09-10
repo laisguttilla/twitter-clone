@@ -6,6 +6,7 @@ use App\Http\Requests\ReplyRequest;
 use App\Reply;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 
 class ReplyController extends Controller
 {
@@ -28,7 +29,8 @@ class ReplyController extends Controller
     public function reply(string $replyID)
     {
         try {
-            return response()->json(Reply::findOrFail($replyID), 200);
+            $reply = Reply::with('user', 'tweet', 'tweet.user', 'likes')->withCount(['likes'])->find($replyID);
+            return response()->json($reply, 200);
         } catch (ModelNotFoundException $exception) {
             return response()->json([
                 'message' => 'Reply not found.'
@@ -50,6 +52,26 @@ class ReplyController extends Controller
             ]);
 
             return response()->json($tweet, 201);
+        } catch (Exception $exception) {
+            return response()->json([
+                'message' => 'Oops! Something went wrong.'
+            ], 500);
+        }
+    }
+
+    public function like(string $replyID, Request $request)
+    {
+        try {
+            $reply = Reply::find($replyID);
+
+            return response()->json($reply->likes()->create([
+                'reply_id' => $reply->id,
+                'user_id' => $request->user_id
+            ], 201));
+        } catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'message' => 'Reply not found.'
+            ], 404);
         } catch (Exception $exception) {
             return response()->json([
                 'message' => 'Oops! Something went wrong.'

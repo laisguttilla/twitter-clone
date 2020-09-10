@@ -20,7 +20,7 @@ Route::group(['prefix' => 'tweets'], function () {
     Route::get('/{id}', 'TweetController@tweet');
     Route::post('/', 'TweetController@create');
     Route::delete('/{id}', 'TweetController@delete');
-    Route::post('/{id}/like', 'TweetLikesController@store');
+    Route::post('/{id}/like', 'TweetController@like');
     Route::delete('/{id}/like', 'TweetLikesController@destroy');
 });
 
@@ -38,4 +38,5 @@ Route::group(['prefix' => 'replies'], function () {
     Route::get('/{id}', 'ReplyController@reply');
     Route::post('/', 'ReplyController@create');
     Route::delete('/{id}', 'ReplyController@delete');
+    Route::post('/{id}/like', 'ReplyController@like');
 });

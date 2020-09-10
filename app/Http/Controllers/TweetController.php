@@ -6,6 +6,7 @@ use App\Http\Requests\TweetRequest;
 use App\Tweet;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 
 class TweetController extends Controller
 {
@@ -28,7 +29,9 @@ class TweetController extends Controller
     public function tweet(string $tweetID)
     {
         try {
-            return response()->json(Tweet::findOrFail($tweetID)->with('replies')->get(), 200);
+            $tweet = Tweet::with(['user','replies', 'replies.user', 'likes', 'likes.user'])->withCount(['replies', 'likes'])->find($tweetID);
+
+            return response()->json($tweet, 200);
         } catch (ModelNotFoundException $exception) {
             return response()->json([
                 'message' => 'Tweet not found.'
@@ -49,6 +52,26 @@ class TweetController extends Controller
             ]);
 
             return response()->json($tweet, 201);
+        } catch (Exception $exception) {
+            return response()->json([
+                'message' => 'Oops! Something went wrong.'
+            ], 500);
+        }
+    }
+
+    public function like(string $tweetID, Request $request)
+    {
+        try {
+            $tweet = Tweet::find($tweetID);
+
+            return response()->json($tweet->likes()->create([
+                'tweet_id' => $tweet->id,
+                'user_id' => $request->user_id
+            ], 201));
+        } catch (ModelNotFoundException $exception) {
+            return response()->json([
+                'message' => 'Tweet not found.'
+            ], 404);
         } catch (Exception $exception) {
             return response()->json([
                 'message' => 'Oops! Something went wrong.'
